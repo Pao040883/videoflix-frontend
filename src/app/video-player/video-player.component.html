@@ -13,6 +13,11 @@
 
   <!-- Video Player -->
   <div *ngIf="!loading && !error && video" class="player-wrapper">
+    <!-- Optimizing Overlay (shown on first load) -->
+    <div *ngIf="showOptimizingOverlay" class="optimizing-overlay">
+      <p>Optimizing video for your screen {{ optimizingProgress }}%</p>
+    </div>
+
     <!-- Back Button Overlay -->
     <button (click)="goBack()" class="btn-back-overlay">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">

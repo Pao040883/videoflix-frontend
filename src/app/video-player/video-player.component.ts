@@ -30,6 +30,9 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   showQualitySelector = false;
   toastMessage = '';
   showToast = false;
+  showOptimizingOverlay = false;
+  optimizingProgress = 0;
+  private isFirstLoad = true;
 
   ngOnInit(): void {
     // Get video ID from route
@@ -67,6 +70,12 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
         // Wait for view to update
         setTimeout(() => {
           this.initializePlayer();
+          
+          // Show optimizing overlay on first load
+          if (this.isFirstLoad) {
+            this.showOptimizingOverlay = true;
+            this.simulateOptimizingProgress();
+          }
         }, 100);
       },
       error: (err) => {
@@ -204,6 +213,22 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.showToast = false;
     }, 3000);
+  }
+
+  private simulateOptimizingProgress(): void {
+    // Simulate progress from 0 to 100%
+    const interval = setInterval(() => {
+      this.optimizingProgress += 10;
+      
+      if (this.optimizingProgress >= 100) {
+        clearInterval(interval);
+        // Hide overlay after a short delay
+        setTimeout(() => {
+          this.showOptimizingOverlay = false;
+          this.isFirstLoad = false;
+        }, 500);
+      }
+    }, 200); // Update every 200ms
   }
 
   // Expose getMediaUrl to template if needed

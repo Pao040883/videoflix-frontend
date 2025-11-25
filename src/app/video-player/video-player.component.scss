@@ -49,6 +49,29 @@
     padding: 0;
     position: relative;
 
+    // Optimizing Overlay
+    .optimizing-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 20px 40px;
+      border-radius: 8px;
+      pointer-events: none;
+
+      p {
+        color: #fff;
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+        text-align: center;
+        white-space: nowrap;
+      }
+    }
+
     .video-wrapper {
       position: relative;
       width: 100%;
