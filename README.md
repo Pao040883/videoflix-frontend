@@ -75,7 +75,7 @@ npm install -g @angular/cli@19
 
 1. **Repository klonen:**
 ```bash
-git clone https://github.com/yourusername/videoflix-frontend.git
+git clone https://github.com/Pao040883/videoflix-frontend.git
 cd videoflix-frontend
 ```
 
