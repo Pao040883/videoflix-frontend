@@ -1,0 +1,12 @@
+/* You can add global styles to this file, and also import other style files */
+@font-face {
+    font-family: "dmsans";
+    src: url("/fonts/DMSans-Regular.ttf")  
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'dmsans' ,Verdana, Geneva, Tahoma, sans-serif;
+}

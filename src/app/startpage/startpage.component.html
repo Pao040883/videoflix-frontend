@@ -1,0 +1,23 @@
+<div class="container">
+  <div class="overlay">
+    <header>
+      @if(!isSmallScreen) {
+      <img [src]="'/images/logo_videoflix.png'" alt="" [routerLink]="['/']" routerLinkActive="router-link-active" />
+      } @else {
+      <img [src]="'/images/logo_videoflix_small.png'" alt="" [routerLink]="['/']" routerLinkActive="router-link-active" />
+      }
+      <button [routerLink]="['/log-in']" routerLinkActive="router-link-active">Log in</button>
+    </header>
+    <main>
+      <div class="headline">
+        <h1>Movies, TV shows, and more</h1>
+        <p>Enter your email to create or restart your subscription.</p>
+      </div>
+      <div class="sign-up">
+        <input placeholder="Email Address" type="text" />
+        <button [routerLink]="['/sign-up']" routerLinkActive="router-link-active" >Sign up ></button>
+      </div>
+    </main>
+    <app-footer></app-footer>
+  </div>
+</div>

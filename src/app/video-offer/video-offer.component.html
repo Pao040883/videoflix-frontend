@@ -1,0 +1,125 @@
+<div class="container">
+  <div class="overlay">
+    <header>
+      <div class="topbar">
+        <img
+          [src]="'/images/logo_videoflix_small.png'"
+          alt="Videoflix Startseite"
+          [routerLink]="['/videoflix/']"
+          routerLinkActive="router-link-active"
+        />
+        <button (click)="logout()" aria-label="Abmelden">
+          <img src="/images/logout.png" alt="" />Log out
+        </button>
+      </div>
+
+      <!-- Featured Video Hero Section -->
+      @if (featuredVideo(); as featured) {
+        <div class="hero">
+          <div class="hero-media">
+            @if (featured.video_urls['720p'] || featured.video_urls['original']) {
+              <video 
+                #heroVideo
+                class="video-js vjs-default-skin vjs-big-play-centered"
+                muted 
+                playsinline
+                preload="auto"
+                data-setup='{}'
+              >
+              </video>
+            }
+            <div class="hero-gradient"></div>
+          </div>
+          <div class="hero-content">
+            <h1>{{ featured.title }}</h1>
+            <p>{{ featured.description }}</p>
+            <button class="primary" (click)="playFeatured()" [attr.aria-label]="featured.title + ' abspielen'">
+              ▶ Play
+            </button>
+          </div>
+        </div>
+      } @else {
+        <!-- Fallback while loading -->
+        <div class="hero">
+          <div class="hero-media">
+            <div class="hero-gradient"></div>
+          </div>
+          <div class="hero-content">
+            @if (loading()) {
+              <p>Laden...</p>
+            }
+          </div>
+        </div>
+      }
+    </header>
+
+    <main>
+      <!-- Video Sections by Genre -->
+      @for(section of sections(); track section.genre_id; let i = $index) {
+        <section class="carousel">
+          <h2>{{ section.title }}</h2>
+          <div
+            class="scroll-wrapper"
+            [class.show-left]="leftShadow[i]"
+            [class.show-right]="rightShadow[i]"
+          >
+            <div
+              class="scroll-container"
+              #scrollable
+              (scroll)="onScrollAtIndex(i, scrollable)"
+              appDragScroll
+              role="list"
+              [attr.aria-label]="section.title + ' Liste'"
+            >
+              @for(video of section.items; track video.id) {
+                <div 
+                  class="card" 
+                  role="listitem" 
+                  tabindex="0"
+                  (click)="playVideo(video)"
+                  (keydown.enter)="playVideo(video)"
+                  (keydown.space)="playVideo(video)"
+                >
+                  @if (video.thumbnail) {
+                    <img [src]="getMediaUrl(video.thumbnail)" [alt]="video.title" loading="lazy" />
+                  } @else {
+                    <div class="placeholder-thumb">{{ video.title }}</div>
+                  }
+                  <!-- Optional: Meta Information
+                  <div class="meta">
+                    <span class="title">{{ video.title }}</span>
+                    @if (video.release_year) {
+                      <span class="year">{{ video.release_year }}</span>
+                    }
+                  </div>
+                  -->
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      }
+
+      <!-- Loading State -->
+      @if (loading() && sections().length === 0) {
+        <div class="loading-state">
+          <p>Videos werden geladen...</p>
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (!loading() && sections().length === 0) {
+        <div class="empty-state">
+          <p>Keine Videos verfügbar.</p>
+        </div>
+      }
+    </main>
+
+    <footer>
+      <div>
+        <a [routerLink]="['/privacy-policy']">Datenschutz</a>
+        <a [routerLink]="['/imprint']">Impressum</a>
+      </div>
+    </footer>
+  </div>
+</div>

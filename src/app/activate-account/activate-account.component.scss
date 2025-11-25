@@ -1,0 +1,82 @@
+.activation-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+
+  .activation-card {
+    background: white;
+    border-radius: 16px;
+    padding: 60px 40px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+
+    .loading, .success, .error {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(102, 126, 234, 0.1);
+        border-top-color: #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      img {
+        width: 80px;
+        height: 80px;
+      }
+
+      h2 {
+        font-size: 28px;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+      }
+
+      p {
+        font-size: 16px;
+        color: #666;
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      .redirect-info {
+        font-size: 14px;
+        color: #999;
+      }
+
+      .btn-login, .btn-signup {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+      }
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}

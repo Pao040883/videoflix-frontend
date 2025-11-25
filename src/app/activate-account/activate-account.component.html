@@ -1,0 +1,25 @@
+<div class="activation-container">
+  <div class="activation-card">
+    @if (loading) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <h2>Account wird aktiviert...</h2>
+      </div>
+    } @else if (success) {
+      <div class="success">
+        <img src="/images/check_circle.png" alt="Success" />
+        <h2>Account aktiviert!</h2>
+        <p>{{ message }}</p>
+        <p class="redirect-info">Du wirst in Kürze zum Login weitergeleitet...</p>
+        <a [routerLink]="['/log-in']" class="btn-login">Jetzt anmelden</a>
+      </div>
+    } @else {
+      <div class="error">
+        <img src="/images/warning.png" alt="Error" />
+        <h2>Aktivierung fehlgeschlagen</h2>
+        <p>{{ message }}</p>
+        <a [routerLink]="['/sign-up']" class="btn-signup">Neue Registrierung</a>
+      </div>
+    }
+  </div>
+</div>

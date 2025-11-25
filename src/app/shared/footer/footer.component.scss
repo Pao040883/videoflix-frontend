@@ -1,0 +1,29 @@
+footer {
+  height: 108px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1440px;
+
+  div {
+    display: flex;
+    width: 270px;
+    height: 43px;
+    gap: 48px;
+    padding: 10px;
+
+    a {
+      color: #fff;
+      font-weight: 500;
+      font-size: 18px;
+      line-height: 100%;
+      letter-spacing: 0%;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}

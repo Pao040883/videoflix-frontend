@@ -1,0 +1,102 @@
+<div class="container">
+  <div class="overlay">
+    <header>
+      @if(!isSmallScreen) {
+      <img [src]="'/images/logo_videoflix.png'" alt="" [routerLink]="['/']" routerLinkActive="router-link-active" />
+      } @else {
+      <img [src]="'/images/logo_videoflix_small.png'" alt="" [routerLink]="['/']" routerLinkActive="router-link-active" />
+      }
+      <button [routerLink]="['/log-in']" routerLinkActive="router-link-active">
+        Log in
+      </button>
+    </header>
+    <main>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="form-container">
+        <h1>Sign up</h1>
+        
+        <!-- Success Message -->
+        @if (successMessage) {
+          <div class="success-message">
+            <img src="/images/check_circle.png" alt="" />
+            <span>{{ successMessage }}</span>
+          </div>
+        }
+        
+        <!-- Error Message -->
+        @if (errorMessage) {
+          <div class="error-message">
+            <img src="/images/warning.png" alt="" />
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+        
+        <div class="input-container">
+          <img class="img-slot-start" [src]="'/images/mail.png'" alt="" />
+          <input type="email" placeholder="Email Address" formControlName="email" />
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <div class="error">
+              <img src="/images/warning.png" alt="" />
+              <span>Bitte gib eine gültige E-Mail ein.</span>
+            </div>
+          }
+        </div>
+        <div class="input-container">
+          <img class="img-slot-start" [src]="'/images/password.png'" alt="" />
+          @if(showPassword) {
+          <img
+            class="img-slot-end"
+            (click)="togglePasswort()"
+            [src]="'/images/visibility_off.png'"
+            alt=""
+          />
+          } @else {
+          <img
+            class="img-slot-end"
+            (click)="togglePasswort()"
+            [src]="'/images/visibility.png'"
+            alt=""
+          />
+          }
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Enter a password"
+            formControlName="password"
+          />
+        </div>
+        <div class="input-container">
+          <img class="img-slot-start" [src]="'/images/password.png'" alt="" />
+          @if(showConfirmPassword) {
+          <img
+            class="img-slot-end"
+            (click)="toggleConfirmPasswort()"
+            [src]="'/images/visibility_off.png'"
+            alt=""
+          />
+          } @else {
+          <img
+            class="img-slot-end"
+            (click)="toggleConfirmPasswort()"
+            [src]="'/images/visibility.png'"
+            alt=""
+          />
+          }
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            placeholder="Confirm password"
+            formControlName="confirmPassword"
+          />
+          @if (form.errors?.['passwordMismatch'] && form.touched) {
+          <div class="error">
+            <img src="/images/warning.png" alt="" />
+            <span>Passwords must match.</span>
+          </div>
+          }
+        </div>
+        <button class="sign-up-button" type="submit" [disabled]="form.invalid || isSubmitting">
+          {{ isSubmitting ? 'Wird registriert...' : 'Sign up' }}
+        </button>
+      </form>
+    </main>
+    <app-footer></app-footer>
+  </div>
+</div>

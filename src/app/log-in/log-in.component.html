@@ -1,0 +1,71 @@
+<div class="container">
+  <div class="overlay">
+    <header>
+      @if(!isSmallScreen) {
+      <img
+        [src]="'/images/logo_videoflix.png'"
+        alt=""
+        [routerLink]="['/']"
+        routerLinkActive="router-link-active"
+      />
+      } @else {
+      <img
+        [src]="'/images/logo_videoflix_small.png'"
+        alt=""
+        [routerLink]="['/']"
+        routerLinkActive="router-link-active"
+      />
+      }
+    </header>
+    <main>
+      <form [formGroup]="form" (ngSubmit)="login()" class="form-container">
+        <h1>Log in</h1>
+        <div class="input-container">
+          <img class="img-slot-start" [src]="'/images/mail.png'" alt="" />
+          <input type="text" placeholder="Email Address" formControlName="email"/>
+        </div>
+        <div class="input-container">
+          <img class="img-slot-start" [src]="'/images/password.png'" alt="" />
+          @if(showPassword) {
+          <img
+            class="img-slot-end"
+            (click)="togglePasswort()"
+            [src]="'/images/visibility_off.png'"
+            alt=""
+          />
+          } @else {
+          <img
+            class="img-slot-end"
+            (click)="togglePasswort()"
+            [src]="'/images/visibility.png'"
+            alt=""
+          />
+          }
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            placeholder="Password"
+            formControlName="password"
+          />
+        </div>
+        <button class="log-in-button">Log in</button>
+        <button
+          class="forgot-password-button"
+          [routerLink]="['/forgot-password']"
+          routerLinkActive="router-link-active"
+        >
+          Forgot password?
+        </button>
+        <p>
+          New to Videoflix?
+          <span
+            class="sign-up-button"
+            [routerLink]="['/sign-up']"
+            routerLinkActive="router-link-active"
+            >Sign Up now</span
+          >
+        </p>
+      </form>
+    </main>
+    <app-footer></app-footer>
+  </div>
+</div>
