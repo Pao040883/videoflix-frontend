@@ -26,11 +26,16 @@ export function getMediaUrl(relativePath: string | null | undefined): string | n
  * Gets the backend base URL without /api/ suffix
  */
 function getBackendBaseUrl(): string {
-  // In a real app, you'd inject this or get it from environment
-  // For now, we construct it from the API_BASE_URL
-  const apiUrl = typeof window !== 'undefined' && (window as any).__env?.API_BASE_URL 
-    || 'http://localhost:8000/api/';
+  // Runtime override möglich via window.__env
+  if (typeof window !== 'undefined' && (window as any).__env?.API_BASE_URL) {
+    return (window as any).__env.API_BASE_URL.replace(/\/api\/$/, '/');
+  }
   
-  // Remove /api/ suffix
-  return apiUrl.replace(/\/api\/$/, '/');
+  // Production: same domain
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return window.location.origin + '/';
+  }
+  
+  // Development: localhost backend
+  return 'http://localhost:8000/';
 }
