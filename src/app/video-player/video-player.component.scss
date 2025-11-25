@@ -391,10 +391,10 @@
       animation: fadeInUp 0.3s ease-out;
     }
 
-    // Title overlay - Bottom center
+    // Title overlay - Above control bar
     .title-overlay {
       position: absolute;
-      bottom: 100px;
+      bottom: 90px;  // Just above the control bar
       left: 50%;
       transform: translateX(-50%);
       z-index: 10;
@@ -402,8 +402,8 @@
       pointer-events: none;
       
       .video-title {
-        font-size: 32px;
-        font-weight: 700;
+        font-size: 24px;
+        font-weight: 600;
         color: #fff;
         text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
         margin: 0;
