@@ -8,8 +8,16 @@ import { API_BASE_URL } from '../config/api.config';
 export function getMediaUrl(relativePath: string | null | undefined): string | null {
   if (!relativePath) return null;
   
-  // If already absolute, return as-is
-  if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+  // If already absolute with http://, upgrade to https:// in production
+  if (relativePath.startsWith('http://')) {
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+      return relativePath.replace('http://', 'https://');
+    }
+    return relativePath;
+  }
+  
+  // If already https://, return as-is
+  if (relativePath.startsWith('https://')) {
     return relativePath;
   }
   
