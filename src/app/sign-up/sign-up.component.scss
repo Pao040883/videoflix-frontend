@@ -195,6 +195,31 @@
             align-self: flex-end;
           }
         }
+
+        .success-message,
+        .error-message {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 100%;
+          padding: 12px;
+          border-radius: 8px;
+          
+          span {
+            color: #ffffff;
+            font-size: 15px;
+          }
+        }
+
+        .success-message {
+          background-color: rgba(46, 125, 50, 0.2);
+          border: 1px solid #2e7d32;
+        }
+
+        .error-message {
+          background-color: rgba(211, 47, 47, 0.2);
+          border: 1px solid #d32f2f;
+        }
       }
     }
   }

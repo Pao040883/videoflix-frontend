@@ -1,73 +1,88 @@
 <div class="video-player-container">
   <!-- Loading State -->
-  <div *ngIf="loading" class="loading-state">
-    <div class="spinner"></div>
-    <p>Video wird geladen...</p>
-  </div>
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Video wird geladen...</p>
+    </div>
+  }
 
   <!-- Error State -->
-  <div *ngIf="error && !loading" class="error-state">
-    <h2>Video konnte nicht geladen werden</h2>
-    <button (click)="goBack()" class="btn-back">Zurück zur Übersicht</button>
-  </div>
+  @if (error() && !loading()) {
+    <div class="error-state">
+      <h2>Video konnte nicht geladen werden</h2>
+      <button (click)="goBack()" class="btn-back">Zurück zur Übersicht</button>
+    </div>
+  }
 
   <!-- Video Player -->
-  <div *ngIf="!loading && !error && video" class="player-wrapper">
-    <!-- Optimizing Overlay (shown on first load) -->
-    <div *ngIf="showOptimizingOverlay" class="optimizing-overlay">
-      <p>Optimizing video for your screen {{ optimizingProgress }}%</p>
-    </div>
+  @if (!loading() && !error() && video()) {
+    <div class="player-wrapper">
+      <!-- Optimizing Overlay (shown on first load) -->
+      @if (showOptimizingOverlay()) {
+        <div class="optimizing-overlay">
+          <p>Optimizing video for your screen {{ optimizingProgress() }}%</p>
+        </div>
+      }
 
-    <!-- Back Button Overlay -->
-    <button (click)="goBack()" class="btn-back-overlay">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </button>
-
-    <!-- Logo Overlay -->
-    <div class="logo-overlay">
-      <img src="/images/logo_videoflix_small.png" alt="Videoflix" />
-    </div>
-
-    <!-- Quality Selector Button -->
-    <button class="btn-quality-overlay" (click)="toggleQualitySelector()" title="Qualität ändern">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <path d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="quality-badge">{{ currentQuality }}</span>
-    </button>
-
-    <!-- Quality Selector Dropdown -->
-    <div *ngIf="showQualitySelector" class="quality-selector">
-      <div class="quality-header">Qualität wählen</div>
-      <button 
-        *ngFor="let quality of availableQualities" 
-        class="quality-option"
-        [class.active]="quality === currentQuality"
-        (click)="changeQuality(quality)">
-        {{ quality }}
-        <span *ngIf="quality === currentQuality" class="check-mark">✓</span>
+      <!-- Back Button Overlay -->
+      <button (click)="goBack()" class="btn-back-overlay">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M19 12H5M5 12L12 19M5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
       </button>
-    </div>
 
-    <!-- Toast Notification -->
-    <div *ngIf="showToast" class="toast-notification">
-      {{ toastMessage }}
-    </div>
+      <!-- Logo Overlay -->
+      <div class="logo-overlay">
+        <img src="/images/logo_videoflix_small.png" alt="Videoflix" />
+      </div>
 
-    <!-- Video Player -->
-    <div class="video-wrapper">
-      <video 
-        #videoPlayer 
-        class="video-js vjs-big-play-centered"
-        playsinline>
-      </video>
+      <!-- Quality Selector Button -->
+      <button class="btn-quality-overlay" (click)="toggleQualitySelector()" title="Qualität ändern">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="quality-badge">{{ currentQuality() }}</span>
+      </button>
 
-      <!-- Title Overlay -->
-      <div class="title-overlay">
-        <h1 class="video-title">{{ video.title }}</h1>
+      <!-- Quality Selector Dropdown -->
+      @if (showQualitySelector()) {
+        <div class="quality-selector">
+          <div class="quality-header">Qualität wählen</div>
+          @for (quality of availableQualities(); track quality) {
+            <button 
+              class="quality-option"
+              [class.active]="quality === currentQuality()"
+              (click)="changeQuality(quality)">
+              {{ quality }}
+              @if (quality === currentQuality()) {
+                <span class="check-mark">✓</span>
+              }
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Toast Notification -->
+      @if (showToast()) {
+        <div class="toast-notification">
+          {{ toastMessage() }}
+        </div>
+      }
+
+      <!-- Video Title Overlay -->
+      <!-- <div class="title-overlay vjs-title-bar-title">
+        <h1 class="video-title">{{ video()?.title }}</h1>
+      </div> -->
+
+      <!-- Video Player -->
+      <div class="video-wrapper">
+        <video 
+          #videoPlayer 
+          class="video-js vjs-theme-city vjs-big-play-centered"
+          playsinline>
+        </video>
       </div>
     </div>
-  </div>
+  }
 </div>

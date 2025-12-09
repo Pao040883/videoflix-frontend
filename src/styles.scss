@@ -10,3 +10,218 @@
     box-sizing: border-box;
     font-family: 'dmsans' ,Verdana, Geneva, Tahoma, sans-serif;
 }
+
+/* Video.js Custom ControlBar Layout */
+.video-js {
+  .vjs-control-bar {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    height: auto !important;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 70%, transparent 100%) !important;
+    padding: 8px 20px 10px !important;
+    justify-content: space-between !important;
+    font-size: 16px !important;
+
+    // Erste Zeile: Progress Bar + Remaining Time NEBENEINANDER
+    .vjs-progress-control {
+      order: 1 !important;
+      flex: 1 1 auto !important;
+      height: 4px !important;
+      margin: 0 10px 0 0 !important;
+      min-width: 0 !important;
+
+      .vjs-progress-holder {
+        margin: 0 !important;
+        height: 4px !important;
+        background: rgba(255, 255, 255, 0.3) !important;
+      }
+
+      .vjs-play-progress {
+        background: #00a8ff !important;
+      }
+    }
+
+    .vjs-remaining-time {
+      order: 2 !important;
+      flex: 0 0 auto !important;
+      font-size: 12px !important;
+      color: #fff !important;
+      line-height: 1 !important;
+      margin: 0 0 0 0 !important;
+      padding: 0 !important;
+      text-align: right !important;
+    }
+
+    // Zeilenumbruch erzwingen
+    .vjs-line-break {
+      order: 3 !important;
+      flex-basis: 100% !important;
+      width: 100% !important;
+      height: 0 !important;
+      display: block !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    // Zweite Zeile: Alle Controls - nutzt VOLLE Breite
+    .vjs-play-control {
+      order: 4 !important;
+      flex: 0 0 auto !important;
+      margin: 0 8px 0 0 !important;
+    }
+
+    .vjs-skip-backward-10 {
+      order: 5 !important;
+      flex: 0 0 auto !important;
+      margin: 0 8px 0 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+
+      .vjs-icon-placeholder {
+        &::before {
+          content: '' !important;
+          background: url('/images/replay_10.svg') center center no-repeat !important;
+          background-size: 1.8em 1.8em !important;
+          width: 1.8em !important;
+          height: 1.8em !important;
+          display: block !important;
+          margin-top: 8px !important;
+          font-size: inherit !important;
+        }
+      }
+    }
+
+    .vjs-skip-forward-10 {
+      order: 6 !important;
+      flex: 0 0 auto !important;
+      margin: 0 8px 0 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+
+      .vjs-icon-placeholder {
+        &::before {
+          content: '' !important;
+          background: url('/images/forward_10.svg') center center no-repeat !important;
+          background-size: 1.8em 1.8em !important;
+          width: 1.8em !important;
+          height: 1.8em !important;
+          display: block !important;
+          margin-top: 8px !important;
+          font-size: inherit !important;
+        }
+      }
+    }
+
+    .vjs-volume-panel {
+      order: 7 !important;
+      flex: 0 0 auto !important;
+      margin: 0 !important;
+      align-items: center !important;
+    }
+
+    .vjs-volume-control {
+        margin-right: 0 !important;
+        margin-left: 16px !important;
+    }
+
+    .vjs-volume-vertical {
+        bottom: 5em !important;
+    }
+
+    // Spacer - WICHTIG: flex: 1 damit Title zentriert wird
+    .vjs-custom-control-spacer:first-of-type {
+      order: 8 !important;
+      flex: 1 !important;
+      min-width: 20px !important;
+      pointer-events: none !important;
+    }
+
+    // Title - zentriert (Custom Component, NICHT die Standard vjs-title-bar)
+    .vjs-custom-title {
+      order: 9 !important;
+      flex: 4 0 auto !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      position: relative !important;
+      background: none !important;
+      width: auto !important;
+      top: auto !important;
+      pointer-events: auto !important;
+
+      .vjs-custom-title-text {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        color: #fff !important;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+        white-space: nowrap !important;
+      }
+    }
+
+    // Spacer - WICHTIG: flex: 1 damit Title zentriert wird
+    .vjs-custom-control-spacer:last-of-type {
+      order: 10 !important;
+      flex: 1 !important;
+      min-width: 20px !important;
+      pointer-events: none !important;
+    }
+
+    // Rechts - Geschwindigkeit
+    .vjs-playback-rate {
+      order: 11 !important;
+      flex: 0 0 auto !important;
+      margin: 0 8px 0 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+
+      .vjs-playback-rate-value {
+        pointer-events: none !important;
+        font-size: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+
+        &::before {
+          content: '' !important;
+          background: url('/images/speed.svg') center center no-repeat !important;
+          background-size: 1.8em 1.8em !important;
+          width: 1.8em !important;
+          height: 1.8em !important;
+          display: block !important;
+          margin-top: 8px !important;
+          font-size: 16px !important;
+        }
+      }
+    }
+
+    .vjs-menu-content {
+      bottom: 1em !important;
+    }
+
+    // Rechts - Fullscreen
+    .vjs-fullscreen-control {
+      order: 12 !important;
+      flex: 0 0 auto !important;
+      margin: 0 !important;
+    }
+
+    // Button Größen
+    .vjs-button {
+      width: 36px !important;
+      height: 36px !important;
+    }
+
+    // Verstecke nicht benötigte Controls
+    .vjs-current-time,
+    .vjs-time-divider,
+    .vjs-duration {
+      display: none !important;
+    }
+  }
+}

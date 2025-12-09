@@ -36,7 +36,7 @@
           @if (form.get('email')?.invalid && form.get('email')?.touched) {
             <div class="error">
               <img src="/images/warning.png" alt="" />
-              <span>Bitte gib eine gültige E-Mail ein.</span>
+              <span>Please enter a valid email.</span>
             </div>
           }
         </div>
@@ -93,7 +93,7 @@
           }
         </div>
         <button class="sign-up-button" type="submit" [disabled]="form.invalid || isSubmitting">
-          {{ isSubmitting ? 'Wird registriert...' : 'Sign up' }}
+          {{ isSubmitting ? 'Registration...' : 'Sign up' }}
         </button>
       </form>
     </main>

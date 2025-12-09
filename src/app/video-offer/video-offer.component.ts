@@ -89,8 +89,6 @@ export class VideoOfferComponent implements OnInit, AfterViewInit, OnDestroy {
           const videoUrl = featured.video_urls[bestQuality] || featured.video_urls['720p'] || featured.video_urls['original'];
           
           if (videoUrl) {
-            console.log(`Hero video - Selected quality: ${bestQuality} for screen height: ${window.innerHeight}px`);
-            
             // Initialize Video.js player
             this.player = videojs(videoElement, {
               controls: false,
@@ -108,17 +106,15 @@ export class VideoOfferComponent implements OnInit, AfterViewInit, OnDestroy {
 
             // Auto-pause after 5 seconds
             this.player.ready(() => {
-              // TypeScript Workaround: Video.js play() ist nicht undefined nach ready()
               const playPromise = (this.player as any)?.play();
               if (playPromise) {
                 playPromise.then(() => {
-                  console.log('Hero video is playing with Video.js');
                   setTimeout(() => {
-                    this.player?.pause();
-                    console.log('Hero video paused after 5 seconds');
+                    if (this.player && !this.player.isDisposed()) {
+                      this.player.pause();
+                    }
                   }, 5000);
                 }).catch((err: Error) => {
-                  console.log('Autoplay blocked:', err);
                 });
               }
             });
@@ -131,27 +127,19 @@ export class VideoOfferComponent implements OnInit, AfterViewInit, OnDestroy {
   private getBestQualityForScreen(): string {
     const screenHeight = window.innerHeight;
     const screenWidth = window.innerWidth;
-    
-    console.log(`Screen dimensions: ${screenWidth}x${screenHeight}, DPR: ${window.devicePixelRatio}`);
-    
     // Wähle Qualität basierend auf Viewport-Größe (nicht DPR, für besseres Testing)
     // Nutze die kleinere Dimension für die Entscheidung
     const relevantDimension = Math.min(screenHeight, screenWidth);
     
     if (screenHeight >= 1440 && screenWidth >= 2560) {
-      console.log('Selected: 1080p (4K display)');
       return '1080p';  // 4K/Large displays
     } else if (screenHeight >= 1080 && screenWidth >= 1920) {
-      console.log('Selected: 1080p (Full HD)');
       return '1080p';  // Full HD displays
     } else if (screenHeight >= 720 && screenWidth >= 1280) {
-      console.log('Selected: 720p (HD)');
       return '720p';   // HD displays
     } else if (relevantDimension >= 360) {
-      console.log('Selected: 360p (Small screen/mobile)');
       return '360p';   // Mobile/Tablet
     } else {
-      console.log('Selected: 120p (Very small screen)');
       return '120p';   // Very small screens
     }
   }

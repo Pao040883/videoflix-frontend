@@ -1,16 +1,16 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, inject, signal, computed, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VideoService } from '../core/services/video.service';
 import { VideoDetail } from '../core/models/video.model';
 import { getMediaUrl } from '../core/utils/media-url.util';
 import videojs from 'video.js';
 import Player from 'video.js/dist/types/player';
-import { CommonModule } from '@angular/common';
+import { registerTitleBar } from './videojs-title-bar';
 
 @Component({
   selector: 'app-video-player',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './video-player.component.html',
   styleUrl: './video-player.component.scss'
 })
@@ -22,17 +22,19 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   @ViewChild('videoPlayer') videoPlayerElement?: ElementRef<HTMLVideoElement>;
   
   private player?: Player;
-  video?: VideoDetail;
-  loading = true;
-  error = false;
-  currentQuality = '';
-  availableQualities: string[] = [];
-  showQualitySelector = false;
-  toastMessage = '';
-  showToast = false;
-  showOptimizingOverlay = false;
-  optimizingProgress = 0;
-  private isFirstLoad = true;
+  
+  // Signals
+  video = signal<VideoDetail | undefined>(undefined);
+  loading = signal(true);
+  error = signal(false);
+  currentQuality = signal('');
+  availableQualities = signal<string[]>([]);
+  showQualitySelector = signal(false);
+  toastMessage = signal('');
+  showToast = signal(false);
+  showOptimizingOverlay = signal(false);
+  optimizingProgress = signal(0);
+  private isFirstLoad = signal(true);
 
   ngOnInit(): void {
     // Get video ID from route
@@ -41,8 +43,8 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     if (videoId) {
       this.loadVideo(+videoId);
     } else {
-      this.error = true;
-      this.loading = false;
+      this.error.set(true);
+      this.loading.set(false);
     }
   }
 
@@ -53,35 +55,48 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     }
   }
 
+  private registerLineBreak(): void {
+    const Component = videojs.getComponent('Component') as any;
+    class LineBreak extends Component {
+      constructor(player: Player, options?: any) {
+        super(player, options);
+        this['addClass']('vjs-line-break');
+      }
+    }
+    videojs.registerComponent('LineBreak', LineBreak as any);
+  }
+
   private loadVideo(id: number): void {
     this.videoService.getVideo(id).subscribe({
       next: (video) => {
-        this.video = video;
-        this.loading = false;
+        this.video.set(video);
+        this.loading.set(false);
         
         // Get available qualities from video_urls
-        this.availableQualities = Object.keys(video.video_urls || {})
-          .filter(q => q !== 'original')
-          .sort((a, b) => {
-            const order: { [key: string]: number } = { '1080p': 4, '720p': 3, '360p': 2, '120p': 1 };
-            return (order[b] || 0) - (order[a] || 0);
-          });
+        this.availableQualities.set(
+          Object.keys(video.video_urls || {})
+            .filter(q => q !== 'original')
+            .sort((a, b) => {
+              const order: { [key: string]: number } = { '1080p': 4, '720p': 3, '360p': 2, '120p': 1 };
+              return (order[b] || 0) - (order[a] || 0);
+            })
+        );
         
         // Wait for view to update
         setTimeout(() => {
           this.initializePlayer();
           
           // Show optimizing overlay on first load
-          if (this.isFirstLoad) {
-            this.showOptimizingOverlay = true;
+          if (this.isFirstLoad()) {
+            this.showOptimizingOverlay.set(true);
             this.simulateOptimizingProgress();
           }
         }, 100);
       },
       error: (err) => {
         console.error('Error loading video:', err);
-        this.error = true;
-        this.loading = false;
+        this.error.set(true);
+        this.loading.set(false);
       }
     });
   }
@@ -89,40 +104,33 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   private getBestQualityForScreen(): string {
     const screenHeight = window.innerHeight;
     const screenWidth = window.innerWidth;
-    
-    console.log(`Screen dimensions: ${screenWidth}x${screenHeight}, DPR: ${window.devicePixelRatio}`);
-    
     // Wähle Qualität basierend auf Viewport-Größe (nicht DPR, für besseres Testing)
     // Nutze die kleinere Dimension für die Entscheidung
     const relevantDimension = Math.min(screenHeight, screenWidth);
     
     if (screenHeight >= 1440 && screenWidth >= 2560) {
-      console.log('Selected: 1080p (4K display)');
       return '1080p';  // 4K/Large displays
     } else if (screenHeight >= 1080 && screenWidth >= 1920) {
-      console.log('Selected: 1080p (Full HD)');
       return '1080p';  // Full HD displays
     } else if (screenHeight >= 720 && screenWidth >= 1280) {
-      console.log('Selected: 720p (HD)');
       return '720p';   // HD displays
     } else if (relevantDimension >= 360) {
-      console.log('Selected: 360p (Small screen/mobile)');
       return '360p';   // Mobile/Tablet
     } else {
-      console.log('Selected: 120p (Very small screen)');
       return '120p';   // Very small screens
     }
   }
 
   private initializePlayer(): void {
-    if (!this.videoPlayerElement || !this.video) return;
+    if (!this.videoPlayerElement || !this.video()) return;
 
     const videoElement = this.videoPlayerElement.nativeElement;
+    const videoData = this.video()!;
     
     // Get best quality based on screen resolution
     const bestQuality = this.getBestQualityForScreen();
-    this.currentQuality = bestQuality;
-    const videoUrl = this.video.video_urls[bestQuality] || this.video.video_urls['720p'] || this.video.video_urls['original'];
+    this.currentQuality.set(bestQuality);
+    const videoUrl = videoData.video_urls[bestQuality] || videoData.video_urls['720p'] || videoData.video_urls['original'];
     const fullUrl = getMediaUrl(videoUrl);
     
     if (!fullUrl) {
@@ -130,18 +138,40 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log(`Selected quality: ${bestQuality} for screen height: ${window.innerHeight}px`);
+    // Register custom components
+    this.registerLineBreak();
+    registerTitleBar();
 
     // Initialize Video.js
     this.player = videojs(videoElement, {
       controls: true,
-      autoplay: true,
       preload: 'auto',
       fill: true,
       playbackRates: [0.5, 1, 1.5, 2],
       controlBar: {
+        children: [
+          'progressControl',
+          'remainingTimeDisplay',
+          'lineBreak',
+          'playToggle',
+          'skipBackward',
+          'skipForward',
+          'volumePanel',
+          'customControlSpacer',
+          {
+            name: 'TitleBar',
+            title: videoData.title
+          },
+          'customControlSpacer',
+          'playbackRateMenuButton',
+          'fullscreenToggle'
+        ],
         volumePanel: {
           inline: false
+        },
+        skipButtons: {
+          forward: 10,
+          backward: 10
         }
       },
       sources: [{
@@ -152,7 +182,6 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
 
     // Player event listeners
     this.player.ready(() => {
-      console.log('Player is ready');
     });
 
     this.player.on('error', () => {
@@ -160,27 +189,30 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     });
   }
 
+
+
   goBack(): void {
     this.router.navigate(['/videoflix']);
   }
 
   toggleQualitySelector(): void {
-    this.showQualitySelector = !this.showQualitySelector;
+    this.showQualitySelector.update(value => !value);
   }
 
   changeQuality(quality: string): void {
-    if (!this.player || !this.video || quality === this.currentQuality) {
-      this.showQualitySelector = false;
+    if (!this.player || !this.video() || quality === this.currentQuality()) {
+      this.showQualitySelector.set(false);
       return;
     }
 
     const currentTime = this.player.currentTime();
     const isPaused = this.player.paused();
 
-    const videoUrl = this.video.video_urls[quality];
+    const videoData = this.video()!;
+    const videoUrl = videoData.video_urls[quality];
     if (!videoUrl) {
       console.error(`Quality ${quality} not available`);
-      this.showQualitySelector = false;
+      this.showQualitySelector.set(false);
       return;
     }
 
@@ -199,33 +231,33 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
       this.player.play();
     }
 
-    this.currentQuality = quality;
-    this.showQualitySelector = false;
+    this.currentQuality.set(quality);
+    this.showQualitySelector.set(false);
     
     // Show toast notification
     this.showToastMessage(`Qualität geändert zu ${quality}`);
   }
 
   private showToastMessage(message: string): void {
-    this.toastMessage = message;
-    this.showToast = true;
+    this.toastMessage.set(message);
+    this.showToast.set(true);
     
     setTimeout(() => {
-      this.showToast = false;
+      this.showToast.set(false);
     }, 3000);
   }
 
   private simulateOptimizingProgress(): void {
     // Simulate progress from 0 to 100%
     const interval = setInterval(() => {
-      this.optimizingProgress += 10;
+      this.optimizingProgress.update(progress => progress + 10);
       
-      if (this.optimizingProgress >= 100) {
+      if (this.optimizingProgress() >= 100) {
         clearInterval(interval);
         // Hide overlay after a short delay
         setTimeout(() => {
-          this.showOptimizingOverlay = false;
-          this.isFirstLoad = false;
+          this.showOptimizingOverlay.set(false);
+          this.isFirstLoad.set(false);
         }, 500);
       }
     }, 200); // Update every 200ms
@@ -233,4 +265,5 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
 
   // Expose getMediaUrl to template if needed
   getMediaUrl = getMediaUrl;
+
 }

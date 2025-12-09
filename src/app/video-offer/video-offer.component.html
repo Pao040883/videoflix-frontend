@@ -81,7 +81,7 @@
                   (keydown.space)="playVideo(video)"
                 >
                   @if (video.thumbnail) {
-                    <img [src]="getMediaUrl(video.thumbnail)" [alt]="video.title" loading="lazy" />
+                    <img [src]="getMediaUrl(video.thumbnail)" [alt]="video.title" loading="eager" />
                   } @else {
                     <div class="placeholder-thumb">{{ video.title }}</div>
                   }

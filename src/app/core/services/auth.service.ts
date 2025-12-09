@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Signal, signal } from '@angular/core';
-import { catchError, map, tap, throwError } from 'rxjs';
+import { catchError, map, tap, throwError, EMPTY } from 'rxjs';
 import { API_BASE_URL } from '../config/api.config';
 
 @Injectable({ providedIn: 'root' })
@@ -50,7 +50,8 @@ export class AuthService {
             this._accessToken.set(null);
             this._isAuthenticated.set(false);
           },
-        })
+        }),
+        catchError(() => EMPTY)
       );
   }
 
@@ -88,7 +89,6 @@ export class AuthService {
         { withCredentials: true }
       )
       .pipe(
-        tap((res) => console.log(res.message)),
         map(() => void 0),
         catchError((err) => throwError(() => err))
       );

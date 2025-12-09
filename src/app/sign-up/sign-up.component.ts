@@ -95,7 +95,7 @@ export class SignUpComponent {
           } else if (err.error?.confirm_password) {
             this.errorMessage = err.error.confirm_password[0];
           } else {
-            this.errorMessage = 'Bitte überprüfe deine Eingaben und versuche es erneut.';
+            this.errorMessage = 'Please check your input and try again.';
           }
           this.isSubmitting = false;
         },

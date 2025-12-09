@@ -1,5 +1,5 @@
 .video-player-container {
-  height:100%;
+  height: 100%;
   width: 100%;
   background: #1a1a1a;
   padding: 0;
@@ -52,7 +52,7 @@
     // Optimizing Overlay
     .optimizing-overlay {
       position: absolute;
-      top: 50%;
+      top: 64px;
       left: 50%;
       transform: translate(-50%, -50%);
       z-index: 100;
@@ -78,155 +78,29 @@
       height: 100%;
       background: #000;
 
-      // Video.js customizations - Modernes Design
       .video-js {
         width: 100%;
         height: 100%;
-        background: #000;
-        
-        // Hide big play button (auto-play)
-        .vjs-big-play-button {
-          display: none;
-        }
+      }
+    }
 
-        // Control Bar - Bottom positioned, sleek design
-        .vjs-control-bar {
-          background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 70%, transparent 100%);
-          backdrop-filter: blur(10px);
-          height: 80px;
-          padding: 0 20px 10px;
-          display: flex;
-          align-items: flex-end;
-        }
+    // Video Title Overlay - centered above control bar
+    .title-overlay {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      text-align: center;
+      pointer-events: none;
 
-        // Progress bar - Blue accent
-        .vjs-progress-control {
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
-          
-          .vjs-progress-holder {
-            height: 4px;
-            margin: 0;
-            background: rgba(255, 255, 255, 0.2);
-          }
-
-          .vjs-play-progress {
-            background: #6366f1;
-          }
-
-          .vjs-load-progress {
-            background: rgba(255, 255, 255, 0.3);
-            
-            div {
-              background: rgba(255, 255, 255, 0.4);
-            }
-          }
-        }
-
-        // Time display
-        .vjs-time-control {
-          font-size: 14px;
-          line-height: 40px;
-          min-width: auto;
-          padding: 0 8px;
-        }
-
-        .vjs-current-time,
-        .vjs-duration {
-          display: block;
-        }
-
-        // Play button
-        .vjs-play-control {
-          order: 1;
-        }
-
-        // Volume
-        .vjs-volume-panel {
-          order: 2;
-        }
-
-        // Time
-        .vjs-current-time {
-          order: 3;
-        }
-
-        .vjs-time-divider {
-          order: 4;
-          min-width: auto;
-          padding: 0;
-        }
-
-        .vjs-duration {
-          order: 5;
-        }
-
-        // Spacer
-        .vjs-spacer {
-          order: 6;
-          flex: 1;
-        }
-
-        // Playback rate
-        .vjs-playback-rate {
-          order: 7;
-          font-size: 14px;
-        }
-
-        // Fullscreen
-        .vjs-fullscreen-control {
-          order: 8;
-        }
-
-        // Button styling
-        .vjs-button {
-          width: 40px;
-          height: 40px;
-          margin: 0 4px;
-          border-radius: 4px;
-          transition: background 0.2s;
-
-          &:hover {
-            background: rgba(255, 255, 255, 0.1);
-          }
-        }
-
-        // Volume slider
-        .vjs-volume-panel {
-          .vjs-volume-control {
-            background: transparent;
-          }
-
-          .vjs-volume-bar {
-            background: rgba(255, 255, 255, 0.2);
-            height: 4px;
-            
-            .vjs-volume-level {
-              background: #6366f1;
-            }
-          }
-        }
-
-        // Text on hover
-        .vjs-menu-button-popup .vjs-menu {
-          background: rgba(30, 30, 30, 0.95);
-          backdrop-filter: blur(10px);
-          border-radius: 8px;
-          padding: 8px 0;
-        }
-
-        .vjs-menu li {
-          padding: 8px 16px;
-          font-size: 14px;
-          
-          &:hover,
-          &.vjs-selected {
-            background: rgba(99, 102, 241, 0.3);
-          }
-        }
+      .video-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #fff;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+        margin: 0;
+        white-space: nowrap;
       }
     }
 
@@ -390,25 +264,6 @@
       border: 1px solid rgba(99, 102, 241, 0.3);
       animation: fadeInUp 0.3s ease-out;
     }
-
-    // Title overlay - Above control bar
-    .title-overlay {
-      position: absolute;
-      bottom: 90px;  // Just above the control bar
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      text-align: center;
-      pointer-events: none;
-      
-      .video-title {
-        font-size: 24px;
-        font-weight: 600;
-        color: #fff;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-        margin: 0;
-      }
-    }
   }
 
   .btn-back {
@@ -501,15 +356,6 @@
         .btn-back-small {
           padding: 10px 16px;
           font-size: 14px;
-        }
-      }
-
-      .title-overlay {
-        bottom: 80px;
-        
-        .video-title {
-          font-size: 20px;
-          padding: 0 20px;
         }
       }
     }
