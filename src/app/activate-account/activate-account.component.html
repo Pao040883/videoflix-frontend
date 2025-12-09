@@ -1,25 +1,50 @@
-<div class="activation-container">
-  <div class="activation-card">
-    @if (loading) {
-      <div class="loading">
-        <div class="spinner"></div>
-        <h2>Account wird aktiviert...</h2>
+<div class="container">
+  <div class="overlay">
+    <header>
+      @if(!isSmallScreen) {
+      <img
+        [src]="'/images/logo_videoflix.png'"
+        alt="Videoflix logo"
+        [routerLink]="['/']"
+        routerLinkActive="router-link-active"
+      />
+      } @else {
+      <img
+        [src]="'/images/logo_videoflix_small.png'"
+        alt="Videoflix logo"
+        [routerLink]="['/']"
+        routerLinkActive="router-link-active"
+      />
+      }
+    </header>
+
+    <main>
+      <div class="status-card" [class.success-card]="success" [class.error-card]="!success && !loading">
+        @if (loading) {
+          <div class="status-block loading">
+            <div class="spinner"></div>
+            <h2>Activating your account...</h2>
+            <p>Please wait a moment.</p>
+          </div>
+        } @else if (success) {
+          <div class="status-block success">
+            <img src="/images/check_circle.png" alt="Success" />
+            <h2>Account activated!</h2>
+            <p>{{ message }}</p>
+            <p class="redirect-info">You will be redirected to login shortly...</p>
+            <a [routerLink]="['/log-in']" class="primary-button">Go to login</a>
+          </div>
+        } @else {
+          <div class="status-block error">
+            <img src="/images/warning.png" alt="Error" />
+            <h2>Activation failed</h2>
+            <p>{{ message }}</p>
+            <a [routerLink]="['/sign-up']" class="secondary-button">Create a new account</a>
+          </div>
+        }
       </div>
-    } @else if (success) {
-      <div class="success">
-        <img src="/images/check_circle.png" alt="Success" />
-        <h2>Account aktiviert!</h2>
-        <p>{{ message }}</p>
-        <p class="redirect-info">Du wirst in Kürze zum Login weitergeleitet...</p>
-        <a [routerLink]="['/log-in']" class="btn-login">Jetzt anmelden</a>
-      </div>
-    } @else {
-      <div class="error">
-        <img src="/images/warning.png" alt="Error" />
-        <h2>Aktivierung fehlgeschlagen</h2>
-        <p>{{ message }}</p>
-        <a [routerLink]="['/sign-up']" class="btn-signup">Neue Registrierung</a>
-      </div>
-    }
+    </main>
+
+    <app-footer></app-footer>
   </div>
 </div>

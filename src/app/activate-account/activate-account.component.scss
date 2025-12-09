@@ -1,82 +1,183 @@
-.activation-container {
-  min-height: 100vh;
+.container {
+  height: 100svh;
+  width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  background-image: url('/images/background_login.png');
+  background-size: cover;
+  background-position: center;
 
-  .activation-card {
-    background: white;
-    border-radius: 16px;
-    padding: 60px 40px;
-    max-width: 500px;
+  .overlay {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    background: linear-gradient(
+      180deg,
+      #000000 -19.89%,
+      rgba(0, 0, 0, 0.55) 40.46%,
+      #000000 100%
+    );
+
     width: 100%;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    text-align: center;
+    height: 100%;
 
-    .loading, .success, .error {
+    header {
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
       align-items: center;
-      gap: 20px;
-
-      .spinner {
-        width: 60px;
-        height: 60px;
-        border: 4px solid rgba(102, 126, 234, 0.1);
-        border-top-color: #667eea;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
+      width: 100%;
+      max-width: 1440px;
+      height: 108px;
+      padding-top: 10px;
+      padding-right: 96px;
+      padding-bottom: 10px;
+      padding-left: 96px;
 
       img {
-        width: 80px;
-        height: 80px;
+        width: 200.66px;
+        height: 32px;
+        z-index: 1;
+        cursor: pointer;
       }
+    }
 
-      h2 {
-        font-size: 28px;
-        font-weight: bold;
-        color: #333;
-        margin: 0;
-      }
+    main {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 32px;
+      width: 100%;
+      max-width: 1440px;
 
-      p {
-        font-size: 16px;
-        color: #666;
-        margin: 0;
-        line-height: 1.6;
-      }
+      .status-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 520px;
+        padding: 48px 56px;
+        gap: 20px;
+        border-radius: 48px;
+        background-color: #1b1b22d9;
+        color: #ffffff;
+        text-align: center;
 
-      .redirect-info {
-        font-size: 14px;
-        color: #999;
-      }
+        .status-block {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
 
-      .btn-login, .btn-signup {
-        display: inline-block;
-        margin-top: 20px;
-        padding: 14px 32px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: all 0.3s;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.15);
+            border-top-color: #2e3edf;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          }
 
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+          img {
+            width: 24px;
+            height: 24px;
+          }
+
+          h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+            color: #ffffff;
+          }
+
+          p {
+            font-size: 16px;
+            margin: 0;
+            line-height: 1.6;
+            color: #e5e5e5;
+          }
+
+          .redirect-info {
+            font-size: 14px;
+            color: #c7c7c7;
+          }
+
+          .primary-button,
+          .secondary-button {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 14px 32px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 700;
+            color: #ffffff;
+            transition: all 0.2s ease;
+          }
+
+          .primary-button {
+            background: #2e3edf;
+
+            &:hover {
+              transform: translateY(-1px);
+              box-shadow: 0 6px 20px rgba(46, 62, 223, 0.45);
+            }
+          }
+
+          .secondary-button {
+            background: transparent;
+            border: 1px solid #ffffff;
+
+            &:hover {
+              background: rgba(255, 255, 255, 0.08);
+            }
+          }
         }
       }
     }
   }
+}
 
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
+@media (max-width: 960px) {
+  .container {
+    .overlay {
+      header {
+        padding-right: 16px;
+        padding-left: 16px;
+
+        img {
+          width: 48px;
+        }
+      }
+
+      main {
+        .status-card {
+          width: 90%;
+          padding: 32px 24px;
+        }
+      }
     }
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    .overlay {
+      main {
+        .status-card {
+          padding-right: 16px;
+          padding-left: 16px;
+
+          h2 {
+            font-size: 26px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
