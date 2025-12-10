@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FooterComponent } from '../shared/footer/footer.component';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { AuthService } from '../core/services/auth.service';
+import { ToastService } from '../core/services/toast.service';
 import { CommonModule } from '@angular/common';
 
 export const passwordMatchValidator: ValidatorFn = (
@@ -27,13 +28,12 @@ export class SignUpComponent {
   private breakpointObserver = inject(BreakpointObserver);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
   
   isSmallScreen = false;
   showPassword = false;
   showConfirmPassword = false;
   isSubmitting = false;
-  successMessage = '';
-  errorMessage = '';
 
   form = new FormGroup(
     {
@@ -72,37 +72,27 @@ export class SignUpComponent {
   }
 
   submit() {
-    if (this.form.valid && !this.isSubmitting) {
-      this.isSubmitting = true;
-      this.errorMessage = '';
-      this.successMessage = '';
+    if (!this.form.valid || this.isSubmitting) return;
+    
+    const { email, password, confirmPassword } = this.form.getRawValue();
+    this.isSubmitting = true;
 
-      const { email, password, confirmPassword } = this.form.getRawValue();
+    this.authService.register(email, password, confirmPassword).subscribe({
+      next: (message) => this.handleRegistrationSuccess(message),
+      error: (err) => this.handleRegistrationError(err),
+      complete: () => { this.isSubmitting = false; }
+    });
+  }
 
-      this.authService.register(email, password, confirmPassword).subscribe({
-        next: (message) => {
-          this.successMessage = message;
-          this.form.reset();
-          // Optional: Nach 3 Sekunden zum Login weiterleiten
-          setTimeout(() => {
-            this.router.navigate(['/log-in']);
-          }, 3000);
-        },
-        error: (err) => {
-          console.error('Registration error:', err);
-          if (err.error?.email) {
-            this.errorMessage = err.error.email[0];
-          } else if (err.error?.confirm_password) {
-            this.errorMessage = err.error.confirm_password[0];
-          } else {
-            this.errorMessage = 'Please check your input and try again.';
-          }
-          this.isSubmitting = false;
-        },
-        complete: () => {
-          this.isSubmitting = false;
-        }
-      });
-    }
+  private handleRegistrationSuccess(message: string) {
+    this.toastService.success(message || 'Registration successful. Please verify your email.');
+    this.form.reset();
+    setTimeout(() => this.router.navigate(['/log-in']), 3000);
+  }
+
+  private handleRegistrationError(err: any) {
+    const errorMessage = err.error?.detail || 'Please check your input and try again.';
+    this.toastService.error(errorMessage);
+    this.isSubmitting = false;
   }
 }

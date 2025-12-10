@@ -14,22 +14,6 @@
       <form [formGroup]="form" (ngSubmit)="submit()" class="form-container">
         <h1>Sign up</h1>
         
-        <!-- Success Message -->
-        @if (successMessage) {
-          <div class="success-message">
-            <img src="/images/check_circle.png" alt="" />
-            <span>{{ successMessage }}</span>
-          </div>
-        }
-        
-        <!-- Error Message -->
-        @if (errorMessage) {
-          <div class="error-message">
-            <img src="/images/warning.png" alt="" />
-            <span>{{ errorMessage }}</span>
-          </div>
-        }
-        
         <div class="input-container">
           <img class="img-slot-start" [src]="'/images/mail.png'" alt="" />
           <input type="email" placeholder="Email Address" formControlName="email" />

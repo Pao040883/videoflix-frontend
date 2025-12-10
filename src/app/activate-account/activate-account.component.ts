@@ -33,28 +33,27 @@ export class ActivateAccountComponent implements OnInit {
     const uid = this.route.snapshot.paramMap.get('uid');
     const token = this.route.snapshot.paramMap.get('token');
 
-    if (uid && token) {
-      this.authService.activateAccount(uid, token).subscribe({
-        next: (msg) => {
-          this.success = true;
-          this.message = msg;
-          this.loading = false;
-          
-          // Redirect to login after a short delay
-          setTimeout(() => {
-            this.router.navigate(['/log-in']);
-          }, 3000);
-        },
-        error: (err) => {
-          this.success = false;
-          this.message = err.error?.error || 'Activation failed. Please try again.';
-          this.loading = false;
-        }
-      });
-    } else {
-      this.success = false;
-      this.message = 'Invalid activation link.';
-      this.loading = false;
+    if (!uid || !token) {
+      this.handleActivationError('Invalid activation link.');
+      return;
     }
+
+    this.authService.activateAccount(uid, token).subscribe({
+      next: (msg) => this.handleActivationSuccess(msg),
+      error: (err) => this.handleActivationError(err.error?.error || 'Activation failed. Please try again.')
+    });
+  }
+
+  private handleActivationSuccess(msg: string) {
+    this.success = true;
+    this.message = msg;
+    this.loading = false;
+    setTimeout(() => this.router.navigate(['/log-in']), 3000);
+  }
+
+  private handleActivationError(errorMsg: string) {
+    this.success = false;
+    this.message = errorMsg;
+    this.loading = false;
   }
 }

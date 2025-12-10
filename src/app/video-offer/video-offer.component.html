@@ -21,6 +21,7 @@
               <video 
                 #heroVideo
                 class="video-js vjs-default-skin vjs-big-play-centered"
+                [attr.poster]="featured.preview_image ? getMediaUrl(featured.preview_image) : (featured.thumbnail ? getMediaUrl(featured.thumbnail) : null)"
                 muted 
                 playsinline
                 preload="auto"

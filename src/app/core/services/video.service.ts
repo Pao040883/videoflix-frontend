@@ -56,6 +56,13 @@ export class VideoService {
   }
 
   /**
+   * Setzt ein Video als Featured (für Hero-Bereich)
+   */
+  setFeaturedVideo(video: VideoDetail): void {
+    this.featuredVideo.set(video);
+  }
+
+  /**
    * Lädt das Featured Video
    */
   getFeaturedVideo(): Observable<VideoDetail> {

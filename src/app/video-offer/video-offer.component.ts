@@ -46,12 +46,27 @@ export class VideoOfferComponent implements OnInit, AfterViewInit, OnDestroy {
   // Computed: Konvertiere videosByGenre in Array für Template
   sections = computed(() => {
     const genreData = this.videosByGenre();
-    return Object.entries(genreData).map(([genreName, data]) => ({
+    const genreSections = Object.entries(genreData).map(([genreName, data]) => ({
       title: genreName,
       genre_id: data.genre_id,
       genre_slug: data.genre_slug,
       items: data.videos
     }));
+    
+    // Sammle alle Videos für "New on Videoflix"
+    const allVideos = genreSections.flatMap(section => section.items);
+    const newest = allVideos
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .slice(0, 10);
+    
+    // Füge "New on Videoflix" am Anfang hinzu
+    if (newest.length > 0) {
+      return [
+        { title: 'New on Videoflix', genre_id: null, genre_slug: 'new', items: newest },
+        ...genreSections
+      ];
+    }
+    return genreSections;
   });
 
   // Track shadow visibility per section
@@ -90,6 +105,7 @@ export class VideoOfferComponent implements OnInit, AfterViewInit, OnDestroy {
           
           if (videoUrl) {
             // Initialize Video.js player
+            const posterUrl = featured.preview_image || featured.thumbnail;
             this.player = videojs(videoElement, {
               controls: false,
               autoplay: true,
@@ -98,6 +114,7 @@ export class VideoOfferComponent implements OnInit, AfterViewInit, OnDestroy {
               fluid: false,
               responsive: false,
               fill: true,
+              poster: posterUrl ? this.getMediaUrl(posterUrl) || '' : '',
               sources: [{
                 src: this.getMediaUrl(videoUrl) || '',
                 type: videoUrl.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
@@ -193,9 +210,70 @@ export class VideoOfferComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // Navigate to video player
+  // Update featured video preview (load full details)
   playVideo(video: Video) {
-    this.router.navigate(['/video', video.id]);
+    this.videoService.getVideo(video.id).subscribe({
+      next: (videoDetail) => {
+        this.videoService.setFeaturedVideo(videoDetail);
+        this.updatePlayerSource(videoDetail);
+      },
+      error: (err) => console.error('Error loading video:', err)
+    });
+  }
+
+  // Update player source without reinitializing
+  private updatePlayerSource(videoDetail: VideoDetail) {
+    if (!this.player || this.player.isDisposed()) {
+      setTimeout(() => this.reinitPlayer(), 100);
+      return;
+    }
+    const bestQuality = this.getBestQualityForScreen();
+    const videoUrl = videoDetail.video_urls[bestQuality] || videoDetail.video_urls['720p'];
+    if (!videoUrl) return;
+    const posterUrl = videoDetail.preview_image || videoDetail.thumbnail;
+    if (posterUrl) this.player.poster(this.getMediaUrl(posterUrl) || '');
+    this.player.src({ src: this.getMediaUrl(videoUrl) || '', 
+      type: videoUrl.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' });
+    this.player.load();
+    const playPromise = (this.player as any)?.play();
+    if (playPromise) {
+      playPromise.then(() => {
+        setTimeout(() => {
+          if (this.player && !this.player.isDisposed()) this.player.pause();
+        }, 5000);
+      }).catch(() => {});
+    }
+  }
+
+  // Reinitialize Video.js player with new featured video
+  private reinitPlayer() {
+    if (!this.heroVideoElement) return;
+    const videoElement = this.heroVideoElement.nativeElement;
+    if (!document.body.contains(videoElement)) return;
+    if (this.player && !this.player.isDisposed()) this.player.dispose();
+    const featured = this.featuredVideo();
+    if (!featured) return;
+    const bestQuality = this.getBestQualityForScreen();
+    const videoUrl = featured.video_urls[bestQuality] || featured.video_urls['720p'];
+    if (!videoUrl) return;
+    const posterUrl = featured.preview_image || featured.thumbnail;
+    this.player = videojs(videoElement, {
+      controls: false, autoplay: true, muted: true, preload: 'auto',
+      fluid: false, responsive: false, fill: true,
+      poster: posterUrl ? this.getMediaUrl(posterUrl) || '' : '',
+      sources: [{ src: this.getMediaUrl(videoUrl) || '', 
+        type: videoUrl.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4' }]
+    });
+    this.player.ready(() => {
+      const playPromise = (this.player as any)?.play();
+      if (playPromise) {
+        playPromise.then(() => {
+          setTimeout(() => {
+            if (this.player && !this.player.isDisposed()) this.player.pause();
+          }, 5000);
+        }).catch(() => {});
+      }
+    });
   }
 
   logout() {
