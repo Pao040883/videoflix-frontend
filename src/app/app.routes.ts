@@ -22,4 +22,5 @@ export const routes: Routes = [
   { path: 'video/:id', component: VideoPlayerComponent, canActivate: [authGuard] },
   { path: 'imprint', component: ImprintComponent },
   { path: 'privacy-policy', component: PrivacyPolicyComponent },
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
